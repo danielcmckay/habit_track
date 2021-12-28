@@ -4,6 +4,7 @@ export type Habit = {
   dates: Date[];
   color: string;
   id: string;
+  createdDate: Date
 };
 
 export enum Frequency {
@@ -31,4 +32,10 @@ export type NewHabit = {
     title: string;
     time: Date;
   };
+};
+
+export type RootStackParamList = {
+  Home: undefined;
+  Viewer: { habit: Habit };
+  Edit: { habit: Habit };
 };

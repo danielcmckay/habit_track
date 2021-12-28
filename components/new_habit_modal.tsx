@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Switch,
 } from "react-native";
-import { Frequency, HabitColors, NewHabit } from "../utils/models";
+import { Frequency, Habit, HabitColors, NewHabit } from "../utils/models";
 import { Card } from "./card";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -16,12 +16,21 @@ import { toUpper } from "../utils/utils";
 export const NewHabitModal = (props: {
   onSave: (newHabit: NewHabit) => void;
   closeModal: () => void;
+  habit?: Habit;
 }) => {
-  const [newHabit, setNewHabit] = useState<NewHabit>({
-    title: "",
-    color: undefined,
-    frequency: Frequency.Daily,
-  });
+  const [newHabit, setNewHabit] = useState<NewHabit>(
+    props.habit
+      ? {
+          title: props.habit.name as string,
+          color: props.habit.color as HabitColors,
+          frequency: props.habit.frequency,
+        }
+      : {
+          title: "",
+          color: undefined,
+          frequency: Frequency.Daily,
+        }
+  );
   const [showFrequencyDropdown, setShowFrequencyDropdown] =
     useState<boolean>(false);
   const [newHabitFrequency, setNewHabitFrequency] = useState<Frequency>(
@@ -41,7 +50,9 @@ export const NewHabitModal = (props: {
           <TouchableOpacity onPress={() => props.closeModal()}>
             <Text style={{ color: HabitColors.Grey }}>Cancel</Text>
           </TouchableOpacity>
-          <Text style={{ color: "#fff", fontWeight: "bold" }}>New Habit</Text>
+          <Text style={{ color: "#fff", fontWeight: "bold" }}>
+            {props.habit ? props.habit.name : "New Habit"}
+          </Text>
           <TouchableOpacity
             onPress={() => onSave()}
             style={{
