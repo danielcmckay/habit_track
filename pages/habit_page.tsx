@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { Habit, HabitColors, RootStackParamList } from "../utils/models";
-import { Card } from "./card";
+import { Habit, RootStackParamList } from "../utils/models";
+import { Card } from "../components/utility/card";
 import { RouteProp } from "@react-navigation/native";
 import { faRecycle, faBell, faPen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -14,6 +14,7 @@ import {
 import { ChartConfig } from "react-native-chart-kit/dist/HelperTypes";
 
 import { Dimensions } from "react-native";
+import { HabitColors } from "../utils/constants";
 const screenWidth = Dimensions.get("window").width;
 
 export const HabitView = (props: {

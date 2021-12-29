@@ -1,10 +1,10 @@
-import { StyleSheet, View, Text, Button, TouchableOpacity } from "react-native";
-import { Habit } from "../utils/models";
-import { getDateRange } from "../utils/utils";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { Habit } from "../../utils/models";
+import { getDateRange, getDayName } from "../../utils/utils";
 
 const today = new Date();
-const startDate: number = new Date().setDate(today.getDate() - 3);
-const endDate: number = new Date().setDate(today.getDate() + 3);
+const startDate: number = new Date().setDate(today.getDate() - 3).valueOf();
+const endDate: number = new Date().setDate(today.getDate() + 3).valueOf();
 
 const dateRange = getDateRange(startDate, endDate);
 
@@ -13,15 +13,18 @@ export const DailyCounter = (props: {
   onPress: (habit: Habit) => void;
 }) => {
   const dateIsInRange = (date: number, range: number[]) => {
-    return range.map((d) => new Date(d).toDateString()).includes(new Date(date).toDateString());
+    return range
+      .map((d) => new Date(d).toDateString())
+      .includes(new Date(date).toDateString());
   };
 
   const handleTap = (habitDate: number) => {
-    const habitCopy = {...props.habit}
+    const habitCopy = { ...props.habit };
     !dateIsInRange(habitDate, props.habit.dates)
       ? habitCopy.dates.push(habitDate)
       : (habitCopy.dates = props.habit.dates.filter(
-          (date) => new Date(date).toDateString() !== new Date(habitDate).toDateString()
+          (date) =>
+            new Date(date).toDateString() !== new Date(habitDate).toDateString()
         ));
 
     props.onPress(habitCopy);
@@ -38,7 +41,7 @@ export const DailyCounter = (props: {
                 textAlign: "center",
               }}
             >
-              {d.toLocaleString("en-us", { weekday: "short" })}
+              {getDayName(d)}
             </Text>
             <View
               style={{
@@ -82,5 +85,6 @@ const styles = StyleSheet.create({
     display: "flex",
     alignContent: "center",
     justifyContent: "center",
+    overflow: "hidden",
   },
 });

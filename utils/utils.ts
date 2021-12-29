@@ -1,3 +1,6 @@
+/*
+ * DATE UTILS
+ */
 export const getDateRange = (startDate: number, endDate: number) => {
   let dates: Date[] = [];
   const theDate = new Date(startDate);
@@ -8,15 +11,21 @@ export const getDateRange = (startDate: number, endDate: number) => {
   return [...dates, new Date(endDate)];
 };
 
-export const toUpper = (word: string) =>
-  word.substring(0, 1).toUpperCase() + word.substring(1);
-
 export const getDaysBetween = (startDate: Date, endDate: Date): number => {
   return Math.floor(
     (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24) + 1
   );
 };
 
+export const getDayName = (date: Date) => {
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+  return days[date.getDay()];
+};
+
+/*
+ * COLOR UTILS
+ */
 export function hexToRgb(hex: string) {
   var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result
@@ -27,3 +36,9 @@ export function hexToRgb(hex: string) {
       }
     : { r: "", g: "", b: "" };
 }
+
+/*
+ * STRING UTILS
+ */
+export const toUpper = (word: string) =>
+  word.substring(0, 1).toUpperCase() + word.substring(1);

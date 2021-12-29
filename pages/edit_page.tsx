@@ -2,7 +2,7 @@ import { RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { NewHabitModal } from "../components/new_habit_modal";
+import { NewHabitModal } from "../components/habit/new_habit_modal";
 import { RootStackParamList } from "../utils/models";
 
 export const EditView = (props: {

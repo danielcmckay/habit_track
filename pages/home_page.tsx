@@ -1,57 +1,33 @@
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useState, useEffect } from "react";
 import { ActivityIndicator, View, StyleSheet } from "react-native";
-import { FloatingActionButton } from "../components/floating_action_button";
-import { HabitCard } from "../components/habit_card";
-import { NewHabitModal } from "../components/new_habit_modal";
-import {
-  RootStackParamList,
-  Habit,
-  NewHabit,
-  HabitColors,
-} from "../utils/models";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { FloatingActionButton } from "../components/utility/floating_action_button";
+import { HabitCard } from "../components/habit/habit_card";
+import { NewHabitModal } from "../components/habit/new_habit_modal";
+import { RootStackParamList, Habit, NewHabit } from "../utils/models";
+import { HabitColors } from "../utils/constants";
+import "react-native-get-random-values";
+import { v4 as uuidv4 } from "uuid";
+import { useLocalStorage } from "../hooks/use_local_storage";
 
 export const Home = (props: {
   navigation: NativeStackNavigationProp<RootStackParamList, "Home">;
 }) => {
   const [habits, setHabits] = useState<Habit[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [getItemsFromLS, saveItemsToLS] = useLocalStorage<Habit>("@habits");
 
   useEffect(() => {
     try {
-      getHabitsFromLS();
+      fetchItems();
     } catch (error) {
       console.log(error);
     }
-  }, [habits]);
+  }, []);
 
-  const getHabitsFromLS = async () => {
-    try {
-      let habitData: Habit[] = [];
-      await AsyncStorage.getItem("@habits")
-        .then((data) => data)
-        .then((res) => (habitData = JSON.parse(res ?? "") as Habit[]))
-        .finally(() =>
-          setHabits(habitData)
-        );
-
-      return null;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const saveHabitsToLS = async (data: Habit[]) => {
-    console.log(JSON.stringify(data));
-    try {
-      await AsyncStorage.setItem(
-        "@habits",
-        JSON.stringify(data)
-      );
-    } catch (error) {
-      console.log(error);
-    }
+  const fetchItems = async () => {
+    let items = await getItemsFromLS();
+    setHabits(items);
   };
 
   const markHabitAsDone = (habit: Habit) => {
@@ -69,14 +45,14 @@ export const Home = (props: {
       frequency: newHabit.frequency,
       dates: [],
       color: newHabit.color as HabitColors,
-      id: newHabit.title as string,
+      id: uuidv4(),
       createdDate: new Date().valueOf(),
       notification: newHabit.notification,
     });
 
     setHabits(habitCopy);
     setShowModal(false);
-    await saveHabitsToLS(habitCopy);
+    await saveItemsToLS(habitCopy);
   };
 
   return (

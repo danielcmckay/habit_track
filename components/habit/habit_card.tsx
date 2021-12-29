@@ -1,8 +1,8 @@
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Text, TouchableOpacity } from "react-native";
-import { Habit, RootStackParamList } from "../utils/models";
-import { toUpper } from "../utils/utils";
-import { Card } from "./card";
+import { Habit, RootStackParamList } from "../../utils/models";
+import { toUpper } from "../../utils/utils";
+import { Card } from "../utility/card";
 import { DailyCounter } from "./daily_counter";
 
 export const HabitCard = (props: {

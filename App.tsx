@@ -1,11 +1,11 @@
 import React from "react";
 import { RootStackParamList } from "./utils/models";
 import { NavigationContainer } from "@react-navigation/native";
-import { HabitView } from "./components/habit_view";
+import { HabitView } from "./pages/habit_page";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Home } from "./pages/home_page";
 import { EditView } from "./pages/edit_page";
-import { Button, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { SettingsView } from "./pages/settings_page";
 
 import { faCog, faPen } from "@fortawesome/free-solid-svg-icons";
@@ -51,7 +51,11 @@ export default function App() {
                   navigation.navigate("Edit", { habit: route.params.habit });
                 }}
               >
-                <FontAwesomeIcon icon={faPen} color="white" style={{marginRight: 15}}/>
+                <FontAwesomeIcon
+                  icon={faPen}
+                  color="white"
+                  style={{ marginRight: 15 }}
+                />
               </TouchableOpacity>
             ),
           })}

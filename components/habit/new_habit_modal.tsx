@@ -7,12 +7,14 @@ import {
   TouchableOpacity,
   Switch,
 } from "react-native";
-import { Frequency, Habit, HabitColors, NewHabit } from "../utils/models";
-import { Card } from "./card";
+import { Habit, NewHabit } from "../../utils/models";
+import { Card } from "../utility/card";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { toUpper } from "../utils/utils";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import { toUpper } from "../../utils/utils";
+import { Frequency, HabitColors } from "../../utils/constants";
+import { NotificationSelector } from "./notification_components";
+import { ColorSelect } from "../utility/color_select";
 
 export const NewHabitModal = (props: {
   onSave: (newHabit: NewHabit) => void;
@@ -35,11 +37,7 @@ export const NewHabitModal = (props: {
   );
   const [showFrequencyDropdown, setShowFrequencyDropdown] =
     useState<boolean>(false);
-  const [newHabitFrequency, setNewHabitFrequency] = useState<Frequency>(
-    "Daily" as Frequency
-  );
   const [enableNotification, setEnableNotification] = useState<boolean>(false);
-  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
 
   const onSave = () => {
     // do validation
@@ -61,7 +59,7 @@ export const NewHabitModal = (props: {
             <TouchableOpacity
               onPress={() => onSave()}
               style={{
-                padding: 10,
+                paddingHorizontal: 10,
                 backgroundColor: HabitColors.Red,
                 borderRadius: 5,
               }}
@@ -78,27 +76,12 @@ export const NewHabitModal = (props: {
           value={newHabit.title}
           onChangeText={(text) => setNewHabit({ ...newHabit, title: text })}
         />
-        <View style={styles.colorRow}>
-          {Array.from(Object.values(HabitColors)).map((color) => (
-            <TouchableOpacity
-              key={color}
-              onPress={() => setNewHabit({ ...newHabit, color: color })}
-            >
-              <View style={{ ...styles.colorIcon, backgroundColor: color }}>
-                {newHabit.color === color && (
-                  <FontAwesomeIcon
-                    icon={faCheck}
-                    color={
-                      color === HabitColors.Yellow || color === HabitColors.Grey
-                        ? "black"
-                        : "white"
-                    }
-                  />
-                )}
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
+        <ColorSelect
+          onSelect={(color: HabitColors) =>
+            setNewHabit({ ...newHabit, color: color })
+          }
+          selectedColor={newHabit.color}
+        />
         <View style={styles.newHabitAttribute}>
           <Text style={{ color: "white" }}>Notification</Text>
           <Switch
@@ -114,49 +97,24 @@ export const NewHabitModal = (props: {
                   notification: { time: new Date().valueOf(), title: "" },
                 });
               }
-              console.log(newHabit)
+              console.log(newHabit);
             }}
           />
         </View>
         {enableNotification ? (
-          <View style={styles.topRow}>
-            <Card style={styles.topRowCard}>
-              <View style={styles.row}>
-                <DateTimePicker
-                  style={{
-                    zIndex: 10000,
-                    elevation: 10000,
-                    height: 200,
-                    width: "70%",
-                  }}
-                  testID="dateTimePicker"
-                  value={newHabit.notification?.time ?? new Date()}
-                  mode={"time"}
-                  is24Hour={true}
-                  display="default"
-                />
-              </View>
-            </Card>
-            <Card style={styles.topRowCard}>
-              <View style={styles.row}>
-                <TextInput
-                  style={styles.newHabitText}
-                  placeholder="New habit title"
-                  placeholderTextColor={HabitColors.Grey}
-                  value={newHabit.notification?.title}
-                  onChangeText={(text) =>
-                    setNewHabit({
-                      ...newHabit,
-                      notification: {
-                        time: newHabit!.notification!.time,
-                        title: text,
-                      },
-                    })
-                  }
-                />
-              </View>
-            </Card>
-          </View>
+          <NotificationSelector
+            notificationTime={new Date(newHabit.notification!.time)}
+            notificationTitle={newHabit.notification!.title}
+            updateFn={(update: string) =>
+              setNewHabit({
+                ...newHabit,
+                notification: {
+                  time: newHabit!.notification!.time,
+                  title: update,
+                },
+              })
+            }
+          />
         ) : (
           <></>
         )}
