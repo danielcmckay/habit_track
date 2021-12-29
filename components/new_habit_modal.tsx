@@ -12,6 +12,7 @@ import { Card } from "./card";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { toUpper } from "../utils/utils";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 export const NewHabitModal = (props: {
   onSave: (newHabit: NewHabit) => void;
@@ -24,6 +25,7 @@ export const NewHabitModal = (props: {
           title: props.habit.name as string,
           color: props.habit.color as HabitColors,
           frequency: props.habit.frequency,
+          notification: props.habit.notification,
         }
       : {
           title: "",
@@ -36,6 +38,8 @@ export const NewHabitModal = (props: {
   const [newHabitFrequency, setNewHabitFrequency] = useState<Frequency>(
     "Daily" as Frequency
   );
+  const [enableNotification, setEnableNotification] = useState<boolean>(false);
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
 
   const onSave = () => {
     // do validation
@@ -43,85 +47,144 @@ export const NewHabitModal = (props: {
   };
 
   return (
-    <Card
-      style={styles.newHabitModal}
-      title={
-        <>
-          <TouchableOpacity onPress={() => props.closeModal()}>
-            <Text style={{ color: HabitColors.Grey }}>Cancel</Text>
-          </TouchableOpacity>
-          <Text style={{ color: "#fff", fontWeight: "bold" }}>
-            {props.habit ? props.habit.name : "New Habit"}
-          </Text>
-          <TouchableOpacity
-            onPress={() => onSave()}
-            style={{
-              padding: 10,
-              backgroundColor: HabitColors.Red,
-              borderRadius: 5,
+    <>
+      <Card
+        style={styles.newHabitModal}
+        title={
+          <>
+            <TouchableOpacity onPress={() => props.closeModal()}>
+              <Text style={{ color: HabitColors.Grey }}>Cancel</Text>
+            </TouchableOpacity>
+            <Text style={{ color: "#fff", fontWeight: "bold" }}>
+              {props.habit ? props.habit.name : "New Habit"}
+            </Text>
+            <TouchableOpacity
+              onPress={() => onSave()}
+              style={{
+                padding: 10,
+                backgroundColor: HabitColors.Red,
+                borderRadius: 5,
+              }}
+            >
+              <Text style={{ color: "#fff" }}>Save</Text>
+            </TouchableOpacity>
+          </>
+        }
+      >
+        <TextInput
+          style={styles.newHabitText}
+          placeholder="New habit title"
+          placeholderTextColor={HabitColors.Grey}
+          value={newHabit.title}
+          onChangeText={(text) => setNewHabit({ ...newHabit, title: text })}
+        />
+        <View style={styles.colorRow}>
+          {Array.from(Object.values(HabitColors)).map((color) => (
+            <TouchableOpacity
+              key={color}
+              onPress={() => setNewHabit({ ...newHabit, color: color })}
+            >
+              <View style={{ ...styles.colorIcon, backgroundColor: color }}>
+                {newHabit.color === color && (
+                  <FontAwesomeIcon
+                    icon={faCheck}
+                    color={
+                      color === HabitColors.Yellow || color === HabitColors.Grey
+                        ? "black"
+                        : "white"
+                    }
+                  />
+                )}
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+        <View style={styles.newHabitAttribute}>
+          <Text style={{ color: "white" }}>Notification</Text>
+          <Switch
+            style={{ zIndex: 0 }}
+            value={enableNotification}
+            onChange={() => {
+              setEnableNotification(!enableNotification);
+              if (newHabit.notification) {
+                setNewHabit({ ...newHabit, notification: undefined });
+              } else {
+                setNewHabit({
+                  ...newHabit,
+                  notification: { time: new Date().valueOf(), title: "" },
+                });
+              }
+              console.log(newHabit)
             }}
-          >
-            <Text style={{ color: "#fff" }}>Save</Text>
-          </TouchableOpacity>
-        </>
-      }
-    >
-      <TextInput
-        style={styles.newHabitText}
-        placeholder="New habit title"
-        placeholderTextColor={HabitColors.Grey}
-        value={newHabit.title}
-        onChangeText={(text) => setNewHabit({ ...newHabit, title: text })}
-      />
-      <View style={styles.colorRow}>
-        {Array.from(Object.values(HabitColors)).map((color) => (
-          <TouchableOpacity
-            key={color}
-            onPress={() => setNewHabit({ ...newHabit, color: color })}
-          >
-            <View style={{ ...styles.colorIcon, backgroundColor: color }}>
-              {newHabit.color === color && (
-                <FontAwesomeIcon
-                  icon={faCheck}
-                  color={
-                    color === HabitColors.Yellow || color === HabitColors.Grey
-                      ? "black"
-                      : "white"
+          />
+        </View>
+        {enableNotification ? (
+          <View style={styles.topRow}>
+            <Card style={styles.topRowCard}>
+              <View style={styles.row}>
+                <DateTimePicker
+                  style={{
+                    zIndex: 10000,
+                    elevation: 10000,
+                    height: 200,
+                    width: "70%",
+                  }}
+                  testID="dateTimePicker"
+                  value={newHabit.notification?.time ?? new Date()}
+                  mode={"time"}
+                  is24Hour={true}
+                  display="default"
+                />
+              </View>
+            </Card>
+            <Card style={styles.topRowCard}>
+              <View style={styles.row}>
+                <TextInput
+                  style={styles.newHabitText}
+                  placeholder="New habit title"
+                  placeholderTextColor={HabitColors.Grey}
+                  value={newHabit.notification?.title}
+                  onChangeText={(text) =>
+                    setNewHabit({
+                      ...newHabit,
+                      notification: {
+                        time: newHabit!.notification!.time,
+                        title: text,
+                      },
+                    })
                   }
                 />
-              )}
-            </View>
-          </TouchableOpacity>
-        ))}
-      </View>
-      <View style={styles.newHabitAttribute}>
-        <Text style={{ color: "white" }}>Notification</Text>
-        <Switch style={{ zIndex: 0 }} />
-      </View>
-      <View style={styles.newHabitAttribute}>
-        <Text style={{ color: "white" }}>Frequency</Text>
-        {!showFrequencyDropdown ? (
-          <TouchableOpacity onPress={() => setShowFrequencyDropdown(true)}>
-            <Text style={{ color: "white" }}>
-              {toUpper(newHabit.frequency)}
-            </Text>
-          </TouchableOpacity>
+              </View>
+            </Card>
+          </View>
         ) : (
-          <Card style={styles.frequencyList}>
-            {Array.from(Object.values(Frequency)).map((freq) => (
-              <TouchableOpacity
-                onPress={() => {
-                  setNewHabit({ ...newHabit, frequency: freq });
-                  setShowFrequencyDropdown(false);
-                }}
-              >
-                <Text style={{ color: "white" }}>{toUpper(freq)}</Text>
-              </TouchableOpacity>
-            ))}
-          </Card>
+          <></>
         )}
-      </View>
-    </Card>
+        <View style={styles.newHabitAttribute}>
+          <Text style={{ color: "white" }}>Frequency</Text>
+          {!showFrequencyDropdown ? (
+            <TouchableOpacity onPress={() => setShowFrequencyDropdown(true)}>
+              <Text style={{ color: "white" }}>
+                {toUpper(newHabit.frequency)}
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <Card style={styles.frequencyList}>
+              {Array.from(Object.values(Frequency)).map((freq) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    setNewHabit({ ...newHabit, frequency: freq });
+                    setShowFrequencyDropdown(false);
+                  }}
+                >
+                  <Text style={{ color: "white" }}>{toUpper(freq)}</Text>
+                </TouchableOpacity>
+              ))}
+            </Card>
+          )}
+        </View>
+      </Card>
+    </>
   );
 };
 
@@ -186,5 +249,23 @@ const styles = StyleSheet.create({
     right: 0,
     top: -10,
     height: 150,
+  },
+  topRow: {
+    width: "90%",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  topRowCard: {
+    width: "48%",
+    height: 50,
+  },
+  row: {
+    width: "90%",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

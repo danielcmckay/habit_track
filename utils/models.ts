@@ -1,10 +1,14 @@
 export type Habit = {
   name: string;
   frequency: Frequency;
-  dates: Date[];
+  dates: number[];
   color: string;
   id: string;
-  createdDate: Date
+  createdDate: number;
+  notification?: {
+    title: string;
+    time: number;
+  };
 };
 
 export enum Frequency {
@@ -30,7 +34,7 @@ export type NewHabit = {
   frequency: Frequency;
   notification?: {
     title: string;
-    time: Date;
+    time: number;
   };
 };
 
@@ -38,4 +42,5 @@ export type RootStackParamList = {
   Home: undefined;
   Viewer: { habit: Habit };
   Edit: { habit: Habit };
+  Settings: undefined
 };
