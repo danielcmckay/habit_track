@@ -1,6 +1,6 @@
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useState, useEffect } from "react";
-import { ActivityIndicator, View, StyleSheet } from "react-native";
+import { StyleSheet, Text, ScrollView, RefreshControl } from "react-native";
 import { FloatingActionButton } from "../components/utility/floating_action_button";
 import { HabitCard } from "../components/habit/habit_card";
 import { NewHabitModal } from "../components/habit/new_habit_modal";
@@ -16,6 +16,7 @@ export const Home = (props: {
   const [habits, setHabits] = useState<Habit[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [getItemsFromLS, saveItemsToLS] = useLocalStorage<Habit>("@habits");
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   useEffect(() => {
     try {
@@ -32,9 +33,12 @@ export const Home = (props: {
 
   const markHabitAsDone = (habit: Habit) => {
     const copy = [...habits];
-    copy.find((h) => h.id === habit.id)!.dates = habit.dates;
+    const idx = copy.findIndex((h) => h.id === habit.id);
+    copy[idx].dates = habit.dates;
 
-    setHabits(copy);
+    setHabits(() => copy);
+    console.log(copy);
+    saveItemsToLS(copy);
   };
 
   const addNewHabit = async (newHabit: NewHabit) => {
@@ -55,11 +59,30 @@ export const Home = (props: {
     await saveItemsToLS(habitCopy);
   };
 
+  const removeHabit = async (id: string) => {
+    const habitCopy = [...habits];
+
+    const filtered = habitCopy.filter((h) => h.id !== id);
+
+    setHabits(filtered);
+    await saveItemsToLS(filtered);
+  };
+
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={() => getItemsFromLS()}
+        />
+      }
+    >
       {!showModal ? (
         !habits.length ? (
-          <ActivityIndicator />
+          <Text style={{ color: "white" }}>
+            Press the "+" to add a new habit!
+          </Text>
         ) : (
           habits.map((habit) => (
             <HabitCard
@@ -67,6 +90,7 @@ export const Home = (props: {
               habit={habit}
               onPress={markHabitAsDone}
               navigation={props.navigation}
+              deleteFn={removeHabit}
             />
           ))
         )
@@ -79,7 +103,7 @@ export const Home = (props: {
       {!showModal && (
         <FloatingActionButton text="+" onPress={() => setShowModal(true)} />
       )}
-    </View>
+    </ScrollView>
   );
 };
 

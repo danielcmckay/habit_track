@@ -23,6 +23,12 @@ export const getDayName = (date: Date) => {
   return days[date.getDay()];
 };
 
+export const dateIsInRange = (date: number, range: number[]) => {
+  return range
+    .map((d) => new Date(d).toDateString())
+    .includes(new Date(date).toDateString());
+};
+
 /*
  * COLOR UTILS
  */

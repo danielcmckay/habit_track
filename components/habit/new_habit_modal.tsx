@@ -60,6 +60,7 @@ export const NewHabitModal = (props: {
               onPress={() => onSave()}
               style={{
                 paddingHorizontal: 10,
+                paddingVertical: 5,
                 backgroundColor: HabitColors.Red,
                 borderRadius: 5,
               }}
@@ -150,7 +151,7 @@ const styles = StyleSheet.create({
   newHabitModal: {
     height: "90%",
     width: "90%",
-    paddingTop: 50,
+    paddingTop: 10,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",

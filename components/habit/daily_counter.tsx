@@ -1,23 +1,11 @@
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { Habit } from "../../utils/models";
-import { getDateRange, getDayName } from "../../utils/utils";
-
-const today = new Date();
-const startDate: number = new Date().setDate(today.getDate() - 3).valueOf();
-const endDate: number = new Date().setDate(today.getDate() + 3).valueOf();
-
-const dateRange = getDateRange(startDate, endDate);
+import { dateIsInRange, getDateRange, getDayName } from "../../utils/utils";
 
 export const DailyCounter = (props: {
   habit: Habit;
   onPress: (habit: Habit) => void;
 }) => {
-  const dateIsInRange = (date: number, range: number[]) => {
-    return range
-      .map((d) => new Date(d).toDateString())
-      .includes(new Date(date).toDateString());
-  };
-
   const handleTap = (habitDate: number) => {
     const habitCopy = { ...props.habit };
     !dateIsInRange(habitDate, props.habit.dates)
@@ -30,11 +18,17 @@ export const DailyCounter = (props: {
     props.onPress(habitCopy);
   };
 
+  const today = new Date();
+  const startDate: number = new Date().setDate(today.getDate() - 3).valueOf();
+  const endDate: number = new Date().setDate(today.getDate() + 3).valueOf();
+
+  const dateRange = getDateRange(startDate, endDate);
+
   return (
     <View style={styles.container}>
       {dateRange.map((d) => {
         return (
-          <View key={d.toISOString()}>
+          <View key={props.habit.id + d.valueOf()}>
             <Text
               style={{
                 color: d.getDate() === today.getDate() ? "white" : "#595959",

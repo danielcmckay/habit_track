@@ -18,9 +18,9 @@ const styles = StyleSheet.create({
     bottom: 25,
     right: 50,
     backgroundColor: "#867BF5",
-    height: 35,
-    width: 35,
-    borderRadius: 35 / 2,
+    height: 45,
+    width: 45,
+    borderRadius: 45 / 2,
     display: "flex",
     flexDirection: "row",
     alignContent: "center",
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   },
   btnText: {
     color: "#fff",
-    fontSize: 25,
+    fontSize: 35,
     textAlign: "center",
   },
 });

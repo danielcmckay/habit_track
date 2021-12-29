@@ -21,7 +21,10 @@ export default function App() {
           name="Home"
           component={Home}
           options={({ navigation }) => ({
-            headerStyle: { backgroundColor: "#111111" },
+            headerStyle: {
+              backgroundColor: "#191919",
+            },
+            headerShadowVisible: false,
             headerTitleStyle: { color: "white" },
             headerRight: () => (
               <TouchableOpacity
@@ -42,7 +45,10 @@ export default function App() {
           name="Viewer"
           component={HabitView}
           options={({ navigation, route }) => ({
-            headerStyle: { backgroundColor: "#111111" },
+            headerStyle: {
+              backgroundColor: "#191919",
+            },
+            headerShadowVisible: false,
             headerTintColor: "#fff",
             headerTitleStyle: { color: "white" },
             headerRight: () => (

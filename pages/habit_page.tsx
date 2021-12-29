@@ -89,17 +89,9 @@ export const HabitView = (props: {
     ],
   };
 
-  const totalDays = getDaysBetween(new Date(habit.createdDate), new Date());
+  const earliest = new Date(Math.min(...habit.dates));
+  const totalDays = getDaysBetween(earliest, new Date());
   const totalPercent: number = habit.dates.length / totalDays;
-
-  console.log(
-    habit.dates.map((date) => ({
-      date: `${new Date(date).getFullYear()}-${
-        new Date(date).getMonth() + 1
-      }-${new Date(date).getDate()}`,
-      count: 1,
-    }))
-  );
 
   return (
     <ScrollView>
