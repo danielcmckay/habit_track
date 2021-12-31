@@ -7,14 +7,12 @@ import {
   TouchableOpacity,
   Switch,
 } from "react-native";
-import { Habit, NewHabit } from "../../utils/models";
+import { Habit, HabitType, NewHabit } from "../../utils/models";
 import { Card } from "../utility/card";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { toUpper } from "../../utils/utils";
 import { Frequency, HabitColors } from "../../utils/constants";
 import { NotificationSelector } from "./notification_components";
 import { ColorSelect } from "../utility/color_select";
+import { DropdownSelect } from "../utility/dropdown_select";
 
 export const NewHabitModal = (props: {
   onSave: (newHabit: NewHabit) => void;
@@ -28,11 +26,13 @@ export const NewHabitModal = (props: {
           color: props.habit.color as HabitColors,
           frequency: props.habit.frequency,
           notification: props.habit.notification,
+          type: props.habit.type,
         }
       : {
           title: "",
           color: undefined,
           frequency: Frequency.Daily,
+          type: "one-time",
         }
   );
   const [showFrequencyDropdown, setShowFrequencyDropdown] =
@@ -83,7 +83,27 @@ export const NewHabitModal = (props: {
           }
           selectedColor={newHabit.color}
         />
-        <View style={styles.newHabitAttribute}>
+        <View style={{ ...styles.newHabitAttribute, zIndex: 2 }}>
+          <Text style={{ color: "white" }}>Habit type</Text>
+          <DropdownSelect
+            options={["one-time", "total count"]}
+            selectedOption={newHabit.type}
+            onSelect={(item) =>
+              setNewHabit({ ...newHabit, type: item as HabitType })
+            }
+          />
+        </View>
+        <View style={{ ...styles.newHabitAttribute, zIndex: 1 }}>
+          <Text style={{ color: "white" }}>Frequency</Text>
+          <DropdownSelect
+            options={Array.from(Object.values(Frequency))}
+            selectedOption={newHabit.frequency}
+            onSelect={(item) =>
+              setNewHabit({ ...newHabit, frequency: item as Frequency })
+            }
+          />
+        </View>
+        <View style={{ ...styles.newHabitAttribute, zIndex: 0 }}>
           <Text style={{ color: "white" }}>Notification</Text>
           <Switch
             style={{ zIndex: 0 }}
@@ -119,29 +139,6 @@ export const NewHabitModal = (props: {
         ) : (
           <></>
         )}
-        <View style={styles.newHabitAttribute}>
-          <Text style={{ color: "white" }}>Frequency</Text>
-          {!showFrequencyDropdown ? (
-            <TouchableOpacity onPress={() => setShowFrequencyDropdown(true)}>
-              <Text style={{ color: "white" }}>
-                {toUpper(newHabit.frequency)}
-              </Text>
-            </TouchableOpacity>
-          ) : (
-            <Card style={styles.frequencyList}>
-              {Array.from(Object.values(Frequency)).map((freq) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    setNewHabit({ ...newHabit, frequency: freq });
-                    setShowFrequencyDropdown(false);
-                  }}
-                >
-                  <Text style={{ color: "white" }}>{toUpper(freq)}</Text>
-                </TouchableOpacity>
-              ))}
-            </Card>
-          )}
-        </View>
       </Card>
     </>
   );
