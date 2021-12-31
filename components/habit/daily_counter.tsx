@@ -1,28 +1,39 @@
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
-import { Habit } from "../../utils/models";
-import { dateIsInRange, getDateRange, getDayName } from "../../utils/utils";
+import React, { useState } from "react";
+import { StyleSheet, View, Text } from "react-native";
+import { Habit, HabitCount } from "../../utils/models";
+import { getDateRange, getDayName } from "../../utils/utils";
+import { Card } from "../utility/card";
+import { Counter } from "../utility/counter";
+import { DateButton } from "../utility/date_button";
+
+const today = new Date();
+const startDate: number = new Date().setDate(today.getDate() - 3).valueOf();
+const endDate: number = new Date().setDate(today.getDate() + 3).valueOf();
+
+const dateRange = getDateRange(startDate, endDate);
 
 export const DailyCounter = (props: {
   habit: Habit;
   onPress: (habit: Habit) => void;
 }) => {
+  const [showCountModal, setShowCountModal] = useState<boolean>(false);
+  const [selectedDate, setSelectedDate] = useState<number>();
+
   const handleTap = (habitDate: number) => {
-    const habitCopy = { ...props.habit };
-    !dateIsInRange(habitDate, props.habit.dates)
-      ? habitCopy.dates.push(habitDate)
-      : (habitCopy.dates = props.habit.dates.filter(
-          (date) =>
-            new Date(date).toDateString() !== new Date(habitDate).toDateString()
-        ));
+    if (props.habit.type === "total count") {
+      setSelectedDate(habitDate);
+      setShowCountModal(true);
+    } else {
+      let copy = { ...props.habit };
+      if (copy.dates.find((a: HabitCount) => a.date === habitDate)) {
+        copy.dates = copy.dates.filter((c: HabitCount) => c.date !== habitDate);
+      } else {
+        copy.dates.push({ date: habitDate, count: 1 } as HabitCount);
+      }
 
-    props.onPress(habitCopy);
+      props.onPress(copy);
+    }
   };
-
-  const today = new Date();
-  const startDate: number = new Date().setDate(today.getDate() - 3).valueOf();
-  const endDate: number = new Date().setDate(today.getDate() + 3).valueOf();
-
-  const dateRange = getDateRange(startDate, endDate);
 
   return (
     <View style={styles.container}>
@@ -37,28 +48,50 @@ export const DailyCounter = (props: {
             >
               {getDayName(d)}
             </Text>
-            <View
-              style={{
-                ...styles.habitDay,
-                backgroundColor: dateIsInRange(d.valueOf(), props.habit.dates)
-                  ? props.habit.color
-                  : "none",
-              }}
-            >
-              <TouchableOpacity onPress={() => handleTap(d.valueOf())}>
-                <Text
-                  style={{
-                    color: "white",
-                    textAlign: "center",
-                  }}
-                >
-                  {d.getDate()}
-                </Text>
-              </TouchableOpacity>
-            </View>
+            <DateButton
+              color={props.habit.color}
+              date={d}
+              habitType={props.habit.type}
+              highlighted={props.habit.dates
+                .map((d) => d.date)
+                .includes(d.valueOf())}
+              saveFn={(date) => handleTap(date.valueOf())}
+            />
           </View>
         );
       })}
+      {showCountModal && (
+        <Card style={styles.countModal}>
+          <Counter
+            count={
+              props.habit.dates.find((a) => a.date === selectedDate!)?.count ??
+              0
+            }
+            hideFn={() => setShowCountModal(false)}
+            saveFn={(count) => {
+              let copy = { ...props.habit };
+
+              if (
+                copy.dates.find((d: HabitCount) => d.date === selectedDate!)
+              ) {
+                if (count === 0) {
+                  copy = {
+                    ...copy,
+                    dates: copy.dates.filter((a) => a.date !== selectedDate),
+                  };
+                }
+              } else if (count > 0) {
+                copy.dates.push({
+                  count: count,
+                  date: selectedDate!,
+                } as HabitCount);
+              }
+
+              props.onPress(copy);
+            }}
+          />
+        </Card>
+      )}
     </View>
   );
 };
@@ -80,5 +113,13 @@ const styles = StyleSheet.create({
     alignContent: "center",
     justifyContent: "center",
     overflow: "hidden",
+  },
+  countModal: {
+    height: 200,
+    position: "absolute",
+    zIndex: 50,
+    top: 15,
+    marginHorizontal: "auto",
+    backgroundColor: "#121212",
   },
 });
