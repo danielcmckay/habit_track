@@ -1,11 +1,17 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { Habit, RootStackParamList } from "../utils/models";
+import { Habit, HabitCount, RootStackParamList } from "../utils/models";
 import { Card } from "../components/utility/card";
 import { RouteProp } from "@react-navigation/native";
 import { faRecycle, faBell, faPen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { getDaysBetween, hexToRgb, toUpper } from "../utils/utils";
+import {
+  filterDataByMonths,
+  getDaysBetween,
+  hexToRgb,
+  MONTHS,
+  toUpper,
+} from "../utils/utils";
 import {
   ContributionGraph,
   LineChart,
@@ -52,44 +58,18 @@ export const HabitView = (props: {
   };
 
   const data = {
-    labels: [
-      "Jan",
-      "Feb",
-      "Mar",
-      "April",
-      "May",
-      "June",
-      "July",
-      "Aug",
-      "Sept",
-      "Oct",
-      "Nov",
-      "Dec",
-    ],
+    labels: MONTHS,
     datasets: [
       {
-        data: [
-          habit.dates.filter((h) => new Date(h).getMonth() === 0).length,
-          habit.dates.filter((h) => new Date(h).getMonth() === 1).length,
-          habit.dates.filter((h) => new Date(h).getMonth() === 2).length,
-          habit.dates.filter((h) => new Date(h).getMonth() === 3).length,
-          habit.dates.filter((h) => new Date(h).getMonth() === 4).length,
-          habit.dates.filter((h) => new Date(h).getMonth() === 5).length,
-          habit.dates.filter((h) => new Date(h).getMonth() === 6).length,
-          habit.dates.filter((h) => new Date(h).getMonth() === 7).length,
-          habit.dates.filter((h) => new Date(h).getMonth() === 8).length,
-          habit.dates.filter((h) => new Date(h).getMonth() === 9).length,
-          habit.dates.filter((h) => new Date(h).getMonth() === 10).length,
-          habit.dates.filter((h) => new Date(h).getMonth() === 11).length,
-        ],
+        data: filterDataByMonths(habit.dates),
         color: (opacity = 1) =>
-          `rgba(${rgbVal.r}, ${rgbVal.g}, ${rgbVal.b}, ${opacity})`, // optional
-        strokeWidth: 2, // optional
+          `rgba(${rgbVal.r}, ${rgbVal.g}, ${rgbVal.b}, ${opacity})`,
+        strokeWidth: 2,
       },
     ],
   };
 
-  const earliest = new Date(Math.min(...habit.dates));
+  const earliest = new Date(Math.min(...habit.dates.map((d) => d.date)));
   const totalDays = getDaysBetween(earliest, new Date());
   const totalPercent: number = habit.dates.length / totalDays;
 
@@ -175,11 +155,11 @@ export const HabitView = (props: {
           style={{ height: 300 }}
         >
           <ContributionGraph
-            values={habit.dates.map((date) => ({
-              date: `${new Date(date).getFullYear()}-${
-                new Date(date).getMonth() + 1
-              }-${new Date(date).getDate()}`,
-              count: new Date(date).getDay(),
+            values={habit.dates.map((d) => ({
+              date: `${new Date(d.date).getFullYear()}-${
+                new Date(d.date).getMonth() + 1
+              }-${new Date(d.date).getDate()}`,
+              count: d.count,
             }))}
             endDate={new Date()}
             numDays={80}

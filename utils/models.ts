@@ -3,14 +3,22 @@ import { Frequency, HabitColors } from "./constants";
 export type Habit = {
   name: string;
   frequency: Frequency;
-  dates: number[];
-  color: string;
+  dates: HabitCount[];
+  color: HabitColors;
   id: string;
   createdDate: number;
   notification?: {
     title: string;
     time: number;
   };
+  type: HabitType;
+};
+
+export type HabitType = "one-time" | "total count";
+
+export type HabitCount = {
+  date: number;
+  count: number;
 };
 
 export type NewHabit = {
@@ -21,6 +29,7 @@ export type NewHabit = {
     title: string;
     time: number;
   };
+  type: HabitType;
 };
 
 export type RootStackParamList = {
