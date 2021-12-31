@@ -3,7 +3,6 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { RootStackParamList } from "../utils/models";
 
-
 export const SettingsView = (props: {
   navigation: NativeStackNavigationProp<RootStackParamList, "Settings">;
 }) => {

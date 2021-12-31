@@ -23,6 +23,7 @@ export const HabitCard = (props: {
   deleteFn: (id: string) => void;
 }) => {
   const [deleteMode, setDeleteMode] = useState<boolean>(false);
+
   return (
     <TouchableOpacity
       style={{ ...styles.card }}
@@ -52,11 +53,14 @@ export const HabitCard = (props: {
         }
       >
         {!deleteMode ? (
-          <DailyCounter habit={props.habit} onPress={props.onPress} />
+          <DailyCounter habit={{ ...props.habit }} onPress={props.onPress} />
         ) : (
           <View style={{ ...styles.titleRow, width: "80%" }}>
             <TouchableOpacity
-              style={{ ...styles.deleteBtn, backgroundColor: HabitColors.Grey }}
+              style={{
+                ...styles.deleteBtn,
+                backgroundColor: HabitColors.Grey,
+              }}
               onPress={() => {
                 setDeleteMode(false);
               }}
@@ -66,7 +70,10 @@ export const HabitCard = (props: {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={{ ...styles.deleteBtn, backgroundColor: HabitColors.Red }}
+              style={{
+                ...styles.deleteBtn,
+                backgroundColor: HabitColors.Red,
+              }}
               onPress={() => {
                 props.deleteFn(props.habit.id);
                 setDeleteMode(false);

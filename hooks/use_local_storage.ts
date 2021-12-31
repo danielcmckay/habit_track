@@ -9,7 +9,7 @@ export const useLocalStorage = <T>(
     try {
       await AsyncStorage.getItem(key).then((res) => {
         if (res !== null) {
-          data = JSON.parse(res) as T[];
+          data = (JSON.parse(res) as T[]) ?? [];
         }
       });
     } catch (error) {

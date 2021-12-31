@@ -9,6 +9,7 @@ import { HabitColors } from "../utils/constants";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 import { useLocalStorage } from "../hooks/use_local_storage";
+import { Card } from "../components/utility/card";
 
 export const Home = (props: {
   navigation: NativeStackNavigationProp<RootStackParamList, "Home">;
@@ -28,6 +29,7 @@ export const Home = (props: {
 
   const fetchItems = async () => {
     let items = await getItemsFromLS();
+
     setHabits(items);
   };
 
@@ -36,8 +38,7 @@ export const Home = (props: {
     const idx = copy.findIndex((h) => h.id === habit.id);
     copy[idx].dates = habit.dates;
 
-    setHabits(() => copy);
-    console.log(copy);
+    setHabits(copy);
     saveItemsToLS(copy);
   };
 
@@ -52,8 +53,8 @@ export const Home = (props: {
       id: uuidv4(),
       createdDate: new Date().valueOf(),
       notification: newHabit.notification,
+      type: newHabit.type,
     });
-
     setHabits(habitCopy);
     setShowModal(false);
     await saveItemsToLS(habitCopy);
@@ -86,7 +87,7 @@ export const Home = (props: {
         ) : (
           habits.map((habit) => (
             <HabitCard
-              key={habit.id}
+              key={habit.id + habit.dates.length}
               habit={habit}
               onPress={markHabitAsDone}
               navigation={props.navigation}
