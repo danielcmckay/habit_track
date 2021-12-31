@@ -1,10 +1,12 @@
+import { HabitCount } from "./models";
+
 /*
  * DATE UTILS
  */
 export const getDateRange = (startDate: number, endDate: number) => {
   let dates: Date[] = [];
-  const theDate = new Date(startDate);
-  while (theDate < new Date(endDate)) {
+  const theDate = new Date(new Date(startDate).setHours(0, 0, 0, 0));
+  while (theDate < new Date(new Date(endDate).setHours(0, 0, 0, 0))) {
     dates = [...dates, new Date(theDate)];
     theDate.setDate(theDate.getDate() + 1);
   }
@@ -27,6 +29,33 @@ export const dateIsInRange = (date: number, range: number[]) => {
   return range
     .map((d) => new Date(d).toDateString())
     .includes(new Date(date).toDateString());
+};
+
+export const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "April",
+  "May",
+  "June",
+  "July",
+  "Aug",
+  "Sept",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
+export const filterDataByMonths = (dates: HabitCount[]) => {
+  let result = [];
+  for (let i = 0; i < 12; i++) {
+    result.push(
+      dates.map((d) => d.date).filter((d) => new Date(d).getMonth() === i)
+        .length
+    );
+  }
+
+  return result;
 };
 
 /*
