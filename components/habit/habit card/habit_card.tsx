@@ -1,20 +1,13 @@
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import {
-  Button,
-  StyleSheet,
-  Text,
-  Touchable,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { TouchableHighlight } from "react-native-gesture-handler";
-import { Habit, RootStackParamList } from "../../utils/models";
-import { toUpper } from "../../utils/utils";
-import { Card } from "../utility/card";
+import { Habit, RootStackParamList } from "../../../utils/models";
+import { toUpper } from "../../../utils/utils";
+import { Card } from "../../utility/card";
 import { DailyCounter } from "./daily_counter";
 import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
-import { HabitColors } from "../../utils/constants";
+import { HabitColors } from "../../../utils/constants";
 
 export const HabitCard = (props: {
   habit: Habit;

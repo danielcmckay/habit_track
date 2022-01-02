@@ -31,38 +31,22 @@ export const dateIsInRange = (date: number, range: number[]) => {
     .includes(new Date(date).toDateString());
 };
 
-export const MONTHS = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "April",
-  "May",
-  "June",
-  "July",
-  "Aug",
-  "Sept",
-  "Oct",
-  "Nov",
-  "Dec",
-];
-
 export const filterDataByMonths = (dates: HabitCount[]) => {
-  let result = [];
+  const result = [];
   for (let i = 0; i < 12; i++) {
     result.push(
       dates.map((d) => d.date).filter((d) => new Date(d).getMonth() === i)
         .length
     );
   }
-
   return result;
 };
 
 /*
  * COLOR UTILS
  */
-export function hexToRgb(hex: string) {
-  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+export const hexToRgb = (hex: string) => {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result
     ? {
         r: String(parseInt(result[1], 16)),
@@ -70,7 +54,7 @@ export function hexToRgb(hex: string) {
         b: String(parseInt(result[3], 16)),
       }
     : { r: "", g: "", b: "" };
-}
+};
 
 /*
  * STRING UTILS

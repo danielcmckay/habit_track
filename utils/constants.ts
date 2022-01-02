@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 export enum Frequency {
   Daily = "daily",
   Weekly = "weekly",
@@ -14,3 +15,18 @@ export enum HabitColors {
   Tan = "#A68467",
   Grey = "#979797",
 }
+
+export const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "April",
+  "May",
+  "June",
+  "July",
+  "Aug",
+  "Sept",
+  "Oct",
+  "Nov",
+  "Dec",
+];

@@ -1,8 +1,9 @@
 import React from "react";
-import { StyleSheet, TextInput, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { HabitColors } from "../../utils/constants";
-import { Card } from "../utility/card";
+import { Card } from "./card";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { HabitTextInput } from "./habit_text_input";
 
 export const NotificationSelector = (props: {
   notificationTime: Date;
@@ -30,12 +31,9 @@ export const NotificationSelector = (props: {
       </Card>
       <Card style={styles.topRowCard}>
         <View style={styles.row}>
-          <TextInput
-            style={styles.newHabitText}
-            placeholder="New habit title"
-            placeholderTextColor={HabitColors.Grey}
+          <HabitTextInput
             value={props.notificationTitle}
-            onChangeText={(text) => props.updateFn(text)}
+            onChange={(text) => props.updateFn(text)}
           />
         </View>
       </Card>

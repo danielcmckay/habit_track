@@ -2,14 +2,13 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, ScrollView, RefreshControl } from "react-native";
 import { FloatingActionButton } from "../components/utility/floating_action_button";
-import { HabitCard } from "../components/habit/habit_card";
-import { NewHabitModal } from "../components/habit/new_habit_modal";
+import { HabitCard } from "../components/habit/habit card/habit_card";
+import { NewHabitModal } from "../components/habit/habit modal/new_habit_modal";
 import { RootStackParamList, Habit, NewHabit } from "../utils/models";
 import { HabitColors } from "../utils/constants";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 import { useLocalStorage } from "../hooks/use_local_storage";
-import { Card } from "../components/utility/card";
 
 export const Home = (props: {
   navigation: NativeStackNavigationProp<RootStackParamList, "Home">;
@@ -17,7 +16,7 @@ export const Home = (props: {
   const [habits, setHabits] = useState<Habit[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [getItemsFromLS, saveItemsToLS] = useLocalStorage<Habit>("@habits");
-  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [refreshing] = useState<boolean>(false);
 
   useEffect(() => {
     try {
@@ -28,7 +27,7 @@ export const Home = (props: {
   }, []);
 
   const fetchItems = async () => {
-    let items = await getItemsFromLS();
+    const items = await getItemsFromLS();
 
     setHabits(items);
   };
@@ -82,7 +81,7 @@ export const Home = (props: {
       {!showModal ? (
         !habits.length ? (
           <Text style={{ color: "white" }}>
-            Press the "+" to add a new habit!
+            Press the &quot;+&quot; to add a new habit!
           </Text>
         ) : (
           habits.map((habit) => (

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text } from "react-native";
-import { Habit, HabitCount } from "../../utils/models";
-import { getDateRange, getDayName } from "../../utils/utils";
-import { Card } from "../utility/card";
-import { Counter } from "../utility/counter";
-import { DateButton } from "../utility/date_button";
+import { Habit, HabitCount } from "../../../utils/models";
+import { getDateRange, getDayName } from "../../../utils/utils";
+import { Card } from "../../utility/card";
+import { Counter } from "../../utility/counter";
+import { DateButton } from "../../utility/date_button";
 
 const today = new Date();
 const startDate: number = new Date().setDate(today.getDate() - 3).valueOf();

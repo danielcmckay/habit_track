@@ -1,18 +1,20 @@
 import React, { useState } from "react";
-import {
-  TextInput,
-  View,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  Switch,
-} from "react-native";
-import { Habit, HabitType, NewHabit } from "../../utils/models";
-import { Card } from "../utility/card";
-import { Frequency, HabitColors } from "../../utils/constants";
-import { NotificationSelector } from "./notification_components";
-import { ColorSelect } from "../utility/color_select";
-import { DropdownSelect } from "../utility/dropdown_select";
+import { View, StyleSheet, Text, Switch } from "react-native";
+import { Habit, HabitType, NewHabit } from "../../../utils/models";
+import { Card } from "../../utility/card";
+import { Frequency, HabitColors } from "../../../utils/constants";
+import { NotificationSelector } from "../../utility/notification_components";
+import { ColorSelect } from "../../utility/color_select";
+import { HabitTextInput } from "../../utility/habit_text_input";
+import { LabelAndInput } from "../../utility/label_and_input";
+import { NewHabitModalHeader } from "./new_habit_modal_header";
+
+const INITIAL_NEW_HABIT: NewHabit = {
+  title: "",
+  color: undefined,
+  frequency: Frequency.Daily,
+  type: "one-time",
+};
 
 export const NewHabitModal = (props: {
   onSave: (newHabit: NewHabit) => void;
@@ -28,54 +30,26 @@ export const NewHabitModal = (props: {
           notification: props.habit.notification,
           type: props.habit.type,
         }
-      : {
-          title: "",
-          color: undefined,
-          frequency: Frequency.Daily,
-          type: "one-time",
-        }
+      : INITIAL_NEW_HABIT
   );
-  const [showFrequencyDropdown, setShowFrequencyDropdown] =
-    useState<boolean>(false);
-  const [enableNotification, setEnableNotification] = useState<boolean>(false);
 
-  const onSave = () => {
-    // do validation
-    props.onSave(newHabit);
-  };
+  const [enableNotification, setEnableNotification] = useState<boolean>(false);
 
   return (
     <>
       <Card
         style={styles.newHabitModal}
         title={
-          <>
-            <TouchableOpacity onPress={() => props.closeModal()}>
-              <Text style={{ color: HabitColors.Grey }}>Cancel</Text>
-            </TouchableOpacity>
-            <Text style={{ color: "#fff", fontWeight: "bold" }}>
-              {props.habit ? props.habit.name : "New Habit"}
-            </Text>
-            <TouchableOpacity
-              onPress={() => onSave()}
-              style={{
-                paddingHorizontal: 10,
-                paddingVertical: 5,
-                backgroundColor: HabitColors.Red,
-                borderRadius: 5,
-              }}
-            >
-              <Text style={{ color: "#fff" }}>Save</Text>
-            </TouchableOpacity>
-          </>
+          <NewHabitModalHeader
+            title={props.habit ? props.habit.name : "New Habit"}
+            closeFn={() => props.closeModal()}
+            saveFn={() => props.onSave(newHabit)}
+          />
         }
       >
-        <TextInput
-          style={styles.newHabitText}
-          placeholder="New habit title"
-          placeholderTextColor={HabitColors.Grey}
+        <HabitTextInput
           value={newHabit.title}
-          onChangeText={(text) => setNewHabit({ ...newHabit, title: text })}
+          onChange={(text) => setNewHabit({ ...newHabit, title: text })}
         />
         <ColorSelect
           onSelect={(color: HabitColors) =>
@@ -83,26 +57,25 @@ export const NewHabitModal = (props: {
           }
           selectedColor={newHabit.color}
         />
-        <View style={{ ...styles.newHabitAttribute, zIndex: 2 }}>
-          <Text style={{ color: "white" }}>Habit type</Text>
-          <DropdownSelect
-            options={["one-time", "total count"]}
-            selectedOption={newHabit.type}
-            onSelect={(item) =>
-              setNewHabit({ ...newHabit, type: item as HabitType })
-            }
-          />
-        </View>
-        <View style={{ ...styles.newHabitAttribute, zIndex: 1 }}>
-          <Text style={{ color: "white" }}>Frequency</Text>
-          <DropdownSelect
-            options={Array.from(Object.values(Frequency))}
-            selectedOption={newHabit.frequency}
-            onSelect={(item) =>
-              setNewHabit({ ...newHabit, frequency: item as Frequency })
-            }
-          />
-        </View>
+        <LabelAndInput
+          options={["one-time", "total count"]}
+          selectedOption={newHabit.type}
+          label="Habit type"
+          onSelect={(item) =>
+            setNewHabit({ ...newHabit, type: item as HabitType })
+          }
+          styles={styles.newHabitAttribute}
+        />
+        <LabelAndInput
+          options={Array.from(Object.values(Frequency))}
+          selectedOption={newHabit.frequency}
+          label="Frequency"
+          onSelect={(item) =>
+            setNewHabit({ ...newHabit, frequency: item as Frequency })
+          }
+          styles={{ ...styles.newHabitAttribute, zindex: 2 }}
+        />
+
         <View style={{ ...styles.newHabitAttribute, zIndex: 0 }}>
           <Text style={{ color: "white" }}>Notification</Text>
           <Switch
